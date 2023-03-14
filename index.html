@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="utf-8">
+    <title>Simple JavaScript Calculator</title>
+    <style>
+        #container {
+            width: 700px;
+            height: 500px;
+            display: flex;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #calculator-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #calculator-input {
+            margin-bottom: 6px;
+            padding: 0 12px;
+            height: 50px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+        }
+
+        #calculator-input:focus {
+            outline: none;
+        }
+
+        .input-error {
+            border: 1px solid red !important;
+        }
+
+        #last-result-list {
+            width: 300px;
+            height: 100%;
+
+            background: #f8f8f8;
+            margin-left: 12px;
+            overflow-y: auto;
+        }
+
+        .last-result-entry {
+            width: 100%;
+            min-height: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: end;
+            justify-content: center;
+            padding: 6px 12px;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
+
+        .last-result-entry:hover {
+            background: #eeeeee;
+        }
+
+        .last-result-entry-eq {
+            color: #aeaeae;
+            overflow-wrap: anywhere;
+        }
+
+        .last-result-entry-result {}
+
+        .calculator-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+            gap: 8px;
+
+        }
+
+        .calculator-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .equals-item {
+            grid-row: 6;
+            grid-column: 1 / 5;
+        }
+
+        .calculator-button {
+            width: 100%;
+            height: 100%;
+
+            font-size: 16px;
+            user-select: none;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            background: #f8f8f8;
+            opacity: 0.8;
+        }
+        .calculator-button:hover {
+            opacity: 1;
+        }
+
+        .equals-button {
+            background: #b8c4ff;
+        }
+
+        .operator-button {
+            background: #bfbfbf;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <div id="calculator-container">
+            <input type="text" id="calculator-input" autofocus />
+
+            <div class="calculator-grid">
+                <div class="calculator-item">
+                    <button class="calculator-button operator-button" data-op="(">
+                        (
+                    </button>
+                </div>
+                <div class="calculator-item">
+                    <button class="calculator-button operator-button" data-op=")">
+                        )
+                    </button>
+                </div>
+                <div class="calculator-item">
+                    <button class="calculator-button operator-button" data-op="c">
+                        C
+                    </button>
+                </div>
+                <div class="calculator-item">
+                    <button class="calculator-button operator-button" data-op="backspace">
+                        ⌫
+                    </button>
+                </div>
+                <div class="calculator-item">
+                    <button class="calculator-button" data-op="7">
+                        7
+                    </button>
+                </div>
+                <div class="calculator-item">
+                    <button class="calculator-button" data-op="8">
+                        8
+                    </button>
+                </div>
+                <div class="calculator-item">
+                    <button class="calculator-button" data-op="9">
+                        9
+                    </button>
+                </div>
+                <div class="calculator-item">
+                    <button class="calculator-button operator-button" data-op="/">
+                        ÷
+                    </button>
+                </div>
+                <div class="calculator-item">
+                    <button class="calculator-button" data-op="4">
+                        4
+                    </button>
+                </div>
+                <div class="calculator-item">
+                    <button class="calculator-button" data-op="5">
+                        5
+                    </button>
+                </div>
+                <div class="calculator-item">
+                    <button class="calculator-button" data-op="6">
+                        6
+                    </button>
+                </div>
+                <div class="calculator-item">
+                    <button class="calculator-button operator-button" data-op="*">
+                        ×
+                    </button>
+                </div>
+                <div class="calculator-item">
+                    <button class="calculator-button" data-op="1">
+                        1
+                    </button>
+                </div>
+                <div class="calculator-item">
+                    <button class="calculator-button" data-op="2">
+                        2
+                    </button>
+                </div>
+                <div class="calculator-item">
+                    <button class="calculator-button" data-op="3">
+                        3
+                    </button>
+                </div>
+                <div class="calculator-item">
+                    <button class="calculator-button operator-button" data-op="-">
+                        -
+                    </button>
+                </div>
+                <div class="calculator-item">
+                    <button class="calculator-button" data-op="0">
+                        0
+                    </button>
+                </div>
+                <div class="calculator-item">
+                    <button class="calculator-button" data-op=".">
+                        .
+                    </button>
+                </div>
+                <div class="calculator-item">
+                    <button class="calculator-button operator-button" data-op="^">
+                        𝑥<sup>𝑦</sup>
+                    </button>
+                </div>
+                <div class="calculator-item">
+                    <button class="calculator-button operator-button" data-op="+">
+                        +
+                    </button>
+                </div>
+                <div class="calculator-item equals-item">
+                    <button class="calculator-button equals-button" data-op="=">
+                        =
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="last-result-list"></div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+
+</html>
