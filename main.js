@@ -5,10 +5,11 @@ const resultList = document.getElementById('last-result-list');
 
 const sanitizeRegex = /[^-()\d/*+.\^e]/g
 const powReplaceRegex = /\^/g
+const xReplaceRegex = /x/g
 // replace multiplication of the form 5(2 + 5) to 5*(2 + 5)
 const multiplicationReplaceRegex = /(\d)(\()/g
 
-function getResultItem (value, result) {
+function getResultItem(value, result) {
     const resultItem = createElementFromHTML(`
       <div class="last-result-entry">
         <div class="last-result-entry-eq">${value} =</div>
@@ -25,8 +26,9 @@ function getResultItem (value, result) {
 
 function calculateResult() {
     const value = input.value
-        .replace(sanitizeRegex, '')
+        .replace(xReplaceRegex, '*')
         .replace(powReplaceRegex, '**')
+        .replace(sanitizeRegex, '')
         .replace(multiplicationReplaceRegex, '$1*$2')
 
     if (value === '') return
@@ -45,6 +47,12 @@ function calculateResult() {
     resultList.prepend(getResultItem(value, result))
 }
 
+function removeInputErrorState() {
+    if (input.classList.contains('input-error')) {
+        input.classList.remove('input-error')
+    }
+}
+
 for (const button of buttons) {
     const op = button.dataset.op
     button.addEventListener('click', event => {
@@ -53,14 +61,17 @@ for (const button of buttons) {
             return;
         }
         if (op === 'backspace') {
+            removeInputErrorState()
             input.value = input.value.slice(0, -1)
             return;
         }
         if (op === 'c') {
+            removeInputErrorState()
             input.value = ''
             return;
         }
 
+        removeInputErrorState()
         input.value += op
     })
 
@@ -71,9 +82,7 @@ for (const button of buttons) {
 }
 
 input.addEventListener('keyup', event => {
-    if (input.classList.contains('input-error')) {
-        input.classList.remove('input-error')
-    }
+    removeInputErrorState()
     if (event.key === 'Enter') {
         calculateResult()
     }
@@ -86,7 +95,7 @@ input.addEventListener('blur', () => {
 
 // create an element from a template string
 function createElementFromHTML(htmlString) {
-  var div = document.createElement('div');
-  div.innerHTML = htmlString.trim();
-  return div.firstChild;
+    var div = document.createElement('div');
+    div.innerHTML = htmlString.trim();
+    return div.firstChild;
 }
