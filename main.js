@@ -18,7 +18,11 @@ function getResultItem(value, result) {
     `)
 
     resultItem.addEventListener('click', () => {
-        input.value += result
+        insertSymbols(String(result))
+    })
+    // prevent button from taking focus
+    resultItem.addEventListener('mousedown', event => {
+        event.preventDefault()
     })
 
     return resultItem
@@ -53,6 +57,38 @@ function removeInputErrorState() {
     }
 }
 
+// make backspace take the cursor position into account
+function backspace() {
+    const { selectionStart, selectionEnd } = input
+    if (selectionStart === selectionEnd) {
+        if (selectionStart === 0) return
+        input.value = input.value.slice(0, input.selectionStart - 1) + input.value.slice(input.selectionEnd)
+        input.setSelectionRange(selectionStart - 1, selectionStart - 1)
+        return
+    }
+
+    input.value =
+        input.value.slice(0, input.selectionStart)
+        + input.value.slice(input.selectionEnd)
+    input.setSelectionRange(selectionStart, selectionStart)
+}
+
+// make inserting a symbol take the cursor position into account
+function insertSymbols(symbols) {
+    const { selectionStart, selectionEnd } = input
+
+    if (selectionStart !== selectionEnd) {
+        backspace()
+    }
+
+    input.value =
+        input.value.slice(0, input.selectionStart)
+        + symbols
+        + input.value.slice(input.selectionEnd)
+
+    input.setSelectionRange(selectionStart + symbols.length, selectionStart + symbols.length)
+}
+
 for (const button of buttons) {
     const op = button.dataset.op
     button.addEventListener('click', event => {
@@ -62,7 +98,7 @@ for (const button of buttons) {
         }
         if (op === 'backspace') {
             removeInputErrorState()
-            input.value = input.value.slice(0, -1)
+            backspace()
             return;
         }
         if (op === 'c') {
@@ -72,7 +108,7 @@ for (const button of buttons) {
         }
 
         removeInputErrorState()
-        input.value += op
+        insertSymbols(op)
     })
 
     // prevent button from taking focus
